@@ -12,17 +12,39 @@ import (
 	"adventofcode2025/day3"
 )
 
-func ReadFile(filename string) []string {
+type PartKey struct {
+	Day   int
+	Part  int
+	Input string
+}
+
+var parts = map[PartKey]func([]string) int{
+	{Day: 1, Part: 1, Input: "test.txt"}: day1.Part1,
+	{Day: 1, Part: 1, Input: "real.txt"}: day1.Part1,
+	{Day: 1, Part: 2, Input: "test.txt"}: day1.Part2,
+	{Day: 1, Part: 2, Input: "real.txt"}: day1.Part2,
+
+	{Day: 2, Part: 1, Input: "test.txt"}: day2.Part1,
+	{Day: 2, Part: 1, Input: "real.txt"}: day2.Part1,
+	{Day: 2, Part: 2, Input: "test.txt"}: day2.Part2,
+	{Day: 2, Part: 2, Input: "real.txt"}: day2.Part2,
+
+	{Day: 3, Part: 1, Input: "test.txt"}: day3.Part1,
+	{Day: 3, Part: 1, Input: "real.txt"}: day3.Part1,
+	{Day: 3, Part: 2, Input: "test.txt"}: day3.Part2,
+	{Day: 3, Part: 2, Input: "real.txt"}: day3.Part2,
+}
+
+func readFile(filename string) []string {
 	file, err := os.Open(filename)
 	if err != nil {
 		panic(err)
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-
 	var lines []string
+	scanner := bufio.NewScanner(file)
+
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
 	}
@@ -31,56 +53,30 @@ func ReadFile(filename string) []string {
 }
 
 func main() {
-	day := flag.Int("day", 1, "Day number 1-12")
-	part := flag.Int("part", 1, "Part number 1-2")
-	input := flag.String("input", "input.txt", "Input file")
+	day := flag.Int("day", 1, "Day number")
+	part := flag.Int("part", 1, "Part number")
+	input := flag.String("input", "real.txt", "Input file")
 	flag.Parse()
 
-	filePath := filepath.Join(fmt.Sprintf("day%d", *day), *input)
-	fmt.Println("Input file: ", filePath)
-	lines := ReadFile(filePath)
-
-	switch *day {
-	case 1:
-		switch *part {
-		case 1:
-			fmt.Println("Day1, Part1")
-			out := day1.Part1(lines)
-			fmt.Println("Part 1: ", out)
-		case 2:
-			fmt.Println("Day1, Part2")
-			out := day1.Part2(lines)
-			fmt.Println("Part 2: ", out)
-		default:
-			fmt.Println("Invalid part")
-		}
-	case 2:
-		switch *part {
-		case 1:
-			fmt.Println("Day2, Part1")
-			out := day2.Part1(lines)
-			fmt.Println("Part 1: ", out)
-		case 2:
-			fmt.Println("Day2, Part2")
-			out := day2.Part2(lines)
-			fmt.Println("Part 2: ", out)
-		default:
-			fmt.Println("Invalid part")
-		}
-	case 3:
-		switch *part {
-		case 1:
-			fmt.Println("Day3, Part1")
-			out := day3.Part1(lines)
-			fmt.Println("Part 1: ", out)
-		case 2:
-			fmt.Println("Day3, Part2")
-			out := day3.Part2(lines)
-			fmt.Println("Part 2: ", out)
-		default:
-			fmt.Println("Invalid part")
-		}
-	default:
-		fmt.Println("Invalid day")
+	key := PartKey{
+		Day:   *day,
+		Part:  *part,
+		Input: *input,
 	}
+
+	partFunc, ok := parts[key]
+	if !ok {
+		fmt.Println("Invalid day, part, or input")
+		return
+	}
+
+	filePath := filepath.Join(
+		fmt.Sprintf("day%d", *day),
+		*input,
+	)
+
+	lines := readFile(filePath)
+	result := partFunc(lines)
+
+	fmt.Printf("Day %d, Part %d, Input %s: %d\n", *day, *part, *input, result)
 }
