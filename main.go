@@ -9,6 +9,7 @@ import (
 
 	"adventofcode2025/day1"
 	"adventofcode2025/day2"
+	"adventofcode2025/day3"
 )
 
 func ReadFile(filename string) []string {
@@ -62,6 +63,19 @@ func main() {
 		case 2:
 			fmt.Println("Day2, Part2")
 			out := day2.Part2(lines)
+			fmt.Println("Part 2: ", out)
+		default:
+			fmt.Println("Invalid part")
+		}
+	case 3:
+		switch *part {
+		case 1:
+			fmt.Println("Day3, Part1")
+			out := day3.Part1(lines)
+			fmt.Println("Part 1: ", out)
+		case 2:
+			fmt.Println("Day3, Part2")
+			out := day3.Part2(lines)
 			fmt.Println("Part 2: ", out)
 		default:
 			fmt.Println("Invalid part")
